@@ -1,0 +1,100 @@
+#include <iostream>
+#include <conio.h>
+#include <windows.h>
+using namespace std;
+
+bool gameOver;
+const int width = 40;
+int x, y, obsX, obsY, score;
+
+void Setup()
+{
+    gameOver = false;
+    x = 2;
+    y = 10;
+    obsX = width - 5;
+    obsY = 10;
+    score = 0;
+}
+
+void Draw()
+{
+    system("cls");
+    // 上边界
+    for (int i = 0; i < width + 2; i++)
+        cout << "#";
+    cout << endl;
+
+    for (int i = 0; i < 12; i++)
+    {
+        for (int j = 0; j < width; j++)
+        {
+            if (j == 0)
+                cout << "#";
+            if (i == y && j == x)
+                cout << "D"; // 恐龙
+            else if (i == obsY && j == obsX)
+                cout << "O"; // 障碍物
+            else
+                cout << " ";
+            if (j == width - 1)
+                cout << "#";
+        }
+        cout << endl;
+    }
+
+    // 下边界
+    for (int i = 0; i < width + 2; i++)
+        cout << "#";
+    cout << endl;
+    cout << "分数: " << score << endl;
+}
+
+void Input()
+{
+    if (_kbhit())
+    {
+        switch (_getch())
+        {
+        case ' ': // 空格跳跃
+            y = 7;
+            break;
+        case 'q': // q退出游戏
+            gameOver = true;
+            break;
+        }
+    }
+}
+
+void Logic()
+{
+    // 重力，落地
+    if (y < 10)
+        y += 1;
+
+    // 障碍物移动
+    obsX--;
+    if (obsX < 0)
+    {
+        obsX = width - 5;
+        score++;
+    }
+
+    // 碰撞检测
+    if (obsX == x && obsY == y)
+        gameOver = true;
+}
+
+int main()
+{
+    Setup();
+    while (!gameOver)
+    {
+        Draw();
+        Input();
+        Logic();
+        Sleep(80);
+    }
+    cout << "游戏结束！最终分数：" << score << endl;
+    return 0;
+}
